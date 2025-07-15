@@ -9,9 +9,9 @@ An open‑source **augmentative and alternative communication (AAC)** Progressiv
 
 ## Why this repo exists
 
-* **Dignity through communication** – my friend can express full sentences instead of isolated letters on cardboard.  
-* **Edge‑hosted** – Cloudflare Pages + Workers keep latency low and cost near zero.  
-* **Incremental learning** – keystrokes will later feed a per‑user language model to cut typing effort over time.
+* **Improved communication** – my friend can express full sentences instead of pointing to isolated letters on cardboard.  
+* **Edge-hosted** – Cloudflare Pages + Workers keep latency low and cost near zero.  
+* **Incremental learning** – keystrokes will later feed a per‑user language model to cut typing effort over time.
 
 ---
 
