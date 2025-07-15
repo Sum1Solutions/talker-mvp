@@ -1,0 +1,7 @@
+
+name = "talker-mvp"
+account_id = "YOUR_ACCOUNT_ID"
+compatibility_date = "2025-07-15"
+
+[site]
+bucket = "./dist"
