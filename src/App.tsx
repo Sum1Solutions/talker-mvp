@@ -32,7 +32,18 @@ export default function App() {
   const [predictions, setPredictions] = useState<string[]>([]);
   const [speaking, setSpeaking] = useState(false);
   const [deferSpeak, setDeferSpeak] = useState(false);
+  const [lastText, setLastText] = useState<string>('');
   const utterRef = React.useRef<SpeechSynthesisUtterance|null>(null);
+
+  // Always track previous text before any change
+  const setCurrentTextWithHistory = (updater: string | ((t: string) => string)) => {
+    setCurrentText(prev => {
+      const updated = typeof updater === 'function' ? updater(prev) : updater;
+      setLastText(prev);
+      return updated;
+    });
+  };
+
 
   // Find a more human-like voice (Google, Apple, or best en-US)
   function getBestVoice() {
@@ -51,12 +62,30 @@ export default function App() {
     if (!currentText.trim()) return;
     const utter = new window.SpeechSynthesisUtterance(currentText);
     utter.voice = getBestVoice();
-    utter.onend = () => setSpeaking(false);
+    utter.onend = () => {
+      setSpeaking(false);
+      // Only clear if not in instant speak mode
+      if (!deferSpeak) {
+        setLastText(currentText);
+        setCurrentText('');
+      }
+    };
     utter.onerror = () => setSpeaking(false);
     utterRef.current = utter;
     setSpeaking(true);
     window.speechSynthesis.speak(utter);
   };
+
+  const goBack = () => {
+    setCurrentText(prev => {
+      // If already at lastText, don't change
+      if (prev === lastText) return prev;
+      // Swap: go back to lastText, and keep current as lastText for further undo
+      setLastText(prev);
+      return lastText;
+    });
+  };
+
 
   const stopSpeaking = () => {
     window.speechSynthesis.cancel();
@@ -77,46 +106,60 @@ export default function App() {
   }, [currentText]);
 
   const handleKey = (key: string) => {
-    if (key === 'SPACE') {
-      setCurrentText(t => t + ' ');
+    if (key === ' ') {
+      setCurrentTextWithHistory(t => t + ' ');
       if (deferSpeak && !speaking && currentText.trim()) {
         setTimeout(() => speak(), 0);
       }
     } else if (key === 'BACKSPACE') {
-      setCurrentText(t => t.slice(0, -1));
+      setCurrentTextWithHistory(t => t.slice(0, -1));
     } else {
-      setCurrentText(t => t + key);
+      setCurrentTextWithHistory(t => t + key);
     }
   };
 
+
   const handlePrediction = (word: string) => {
     const lastSpace = currentText.lastIndexOf(' ');
-    setCurrentText(
+    setCurrentTextWithHistory(
       currentText.slice(0, lastSpace + 1) + word + ' '
     );
   };
 
+
   return (
     <div className="container" style={{position: 'relative'}}>
-      <OutputPanel text={currentText} setText={setCurrentText}
+      <OutputPanel text={currentText} setText={setCurrentTextWithHistory}
         speak={speak} stopSpeaking={stopSpeaking} speaking={speaking}
         deferSpeak={deferSpeak} setDeferSpeak={setDeferSpeak}
+        lastText={lastText} goBack={goBack}
       />
-      <div className="phrase-bar">
-        {PHRASE_BUTTONS.map(btn => (
-          <button
-            key={btn.emoji}
-            className="phrase-btn"
-            onClick={() => setCurrentText(t => (t.trim() ? t + ' ' : '') + btn.text)}
-          >
-            <span style={{fontSize: '2.2rem', marginRight: '0.5rem'}}>{btn.emoji}</span>
-            {btn.text.length > 18 ? btn.text.slice(0, 18) + '…' : btn.text}
-          </button>
-        ))}
+      <div
+        className="main-content"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: 'calc(100vh - 40vh)', // Leaves space for the fixed keyboard and OutputPanel
+          overflow: 'auto',
+        }}
+        aria-label="Main communication area"
+      >
+        <div className="phrase-bar" aria-label="Quick phrases">
+          {PHRASE_BUTTONS.map(btn => (
+            <button
+              key={btn.emoji}
+              className="phrase-btn"
+              aria-label={btn.text}
+              onClick={() => setCurrentTextWithHistory(t => (t.trim() ? t + ' ' : '') + btn.text)}
+            >
+              <span style={{fontSize: '2.2rem', marginRight: '0.5rem'}}>{btn.emoji}</span>
+              {btn.text.length > 18 ? btn.text.slice(0, 18) + '…' : btn.text}
+            </button>
+          ))}
+        </div>
+        <PredictionBar predictions={predictions} onPick={handlePrediction}/>
       </div>
-      <PredictionBar predictions={predictions} onPick={handlePrediction}/>
       <Keyboard onKeyPress={handleKey}/>
-
     </div>
   );
 }

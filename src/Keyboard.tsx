@@ -13,19 +13,24 @@ interface Props {
 
 export default function Keyboard({ onKeyPress }: Props) {
   const [pressedKey, setPressedKey] = useState<string | null>(null);
+  const [caps, setCaps] = useState<boolean>(true);
 
   useEffect(() => {
     const handleDown = (e: KeyboardEvent) => {
-      let key = e.key.toUpperCase();
+      let key = e.key;
       if (key === ' ') key = 'SPACE';
-      if (key === 'BACKSPACE') key = 'BACKSPACE';
+      if (key === 'Backspace' || key === 'BACKSPACE') key = 'BACKSPACE';
+      if (key === 'Shift' || key === 'CapsLock') {
+        setCaps(c => !c);
+        return;
+      }
       if (
-        (key.length === 1 && /[A-Z]/.test(key)) ||
+        (key.length === 1 && /[a-zA-Z]/.test(key)) ||
         key === 'SPACE' ||
         key === 'BACKSPACE'
       ) {
-        setPressedKey(key);
-        onKeyPress(key);
+        setPressedKey(caps ? key.toUpperCase() : key.toLowerCase());
+        onKeyPress(caps ? key.toUpperCase() : key.toLowerCase());
       }
     };
     const handleUp = () => setPressedKey(null);
@@ -35,19 +40,29 @@ export default function Keyboard({ onKeyPress }: Props) {
       window.removeEventListener('keydown', handleDown);
       window.removeEventListener('keyup', handleUp);
     };
-  }, [onKeyPress]);
+  }, [onKeyPress, caps]);
 
   return (
     <div className="keyboard">
       {rows.map((row, idx) => (
         <div key={idx} className="kb-row">
-          {row.split('').map(ch => (
+          {idx === 0 && (
+            <button
+              className={`key caps-toggle${caps ? ' key-active' : ''}`}
+              aria-label={caps ? 'Caps Lock On' : 'Caps Lock Off'}
+              onClick={() => setCaps(c => !c)}
+              style={{marginRight: '0.4rem', background: caps ? '#e3f2fd' : '#f4f8ff', borderColor: '#1976d2'}}
+            >
+              {caps ? '↑' : '↓'}
+            </button>
+          )}
+          {row.split('').map((ch, i) => (
             <button
               key={ch}
-              className={`key${pressedKey === ch ? ' key-active' : ''}`}
-              onClick={() => onKeyPress(ch)}
+              className={`key${pressedKey === (caps ? ch : ch.toLowerCase()) ? ' key-active' : ''}`}
+              onClick={() => onKeyPress(caps ? ch : ch.toLowerCase())}
             >
-              {ch}
+              {caps ? ch : ch.toLowerCase()}
             </button>
           ))}
         </div>
@@ -55,13 +70,16 @@ export default function Keyboard({ onKeyPress }: Props) {
       <div className="kb-row">
         <button
           className={`key wide${pressedKey === 'SPACE' ? ' key-active' : ''}`}
-          onClick={() => onKeyPress('SPACE')}
+          style={{marginRight: 'auto'}} // push backspace to right
+          onClick={() => onKeyPress(' ')}
+          aria-label="Space bar"
         >
           Space
         </button>
         <button
-          className={`key${pressedKey === 'BACKSPACE' ? ' key-active' : ''}`}
+          className={`key backspace${pressedKey === 'BACKSPACE' ? ' key-active' : ''}`}
           onClick={() => onKeyPress('BACKSPACE')}
+          aria-label="Backspace"
         >
           ⌫
         </button>
