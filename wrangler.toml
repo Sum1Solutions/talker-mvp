@@ -1,7 +1,11 @@
 
 name = "talker-mvp"
-account_id = "YOUR_ACCOUNT_ID"
 compatibility_date = "2025-07-15"
 
+# Define the static assets
 [site]
 bucket = "./dist"
+
+# Pages deployment configuration
+type = "pages"
+
