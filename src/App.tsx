@@ -101,7 +101,10 @@ export default function App() {
       setSpeaking(false);
       // Only clear if not in instant speak mode
       if (!deferSpeak) {
-        setLastText(currentText);
+        // Store the full window of text when cleared
+        if (currentText.trim()) {
+          setLastText(currentText);
+        }
         setCurrentText('');
       }
     };
@@ -140,11 +143,17 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [currentText]);
 
-  // Add global keyboard event listener for Enter key
+  // Add global keyboard event listener for Enter key and handle space bar focus issues
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        speak();
+        e.preventDefault(); // Prevent default behavior
+        speak(); // This will speak and then clear the text
+      }
+      
+      // If space is pressed, ensure no button has focus to prevent accidental re-clicks
+      if (e.key === ' ' && document.activeElement instanceof HTMLButtonElement) {
+        document.activeElement.blur();
       }
     };
     
@@ -174,8 +183,41 @@ export default function App() {
   };
 
 
+  const resetToDefault = () => {
+    // Reset floating button position by clearing local storage
+    localStorage.removeItem('floatingButtonPosition');
+    // Force refresh to apply defaults
+    window.location.reload();
+  };
+
   return (
     <div className="container" style={{position: 'relative'}}>
+      <div className="app-header">
+        <h1 className="app-title">ocutalk.com</h1>
+        <div className="dropdown">
+          <button className="settings-button" title="Settings">
+            ⚙️
+          </button>
+          <div className="dropdown-content">
+            <button 
+              onClick={resetToDefault}
+              className="dropdown-item"
+              title="Reset to default settings"
+            >
+              Reset to default
+            </button>
+            <a 
+              href="https://github.com/sum1solutions/ocutalk" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="dropdown-item"
+              title="View source code on GitHub"
+            >
+              GitHub
+            </a>
+          </div>
+        </div>
+      </div>
       <OutputPanel text={currentText} setText={setCurrentTextWithHistory}
         speak={speak} stopSpeaking={stopSpeaking} speaking={speaking}
         deferSpeak={deferSpeak} setDeferSpeak={setDeferSpeak}
@@ -186,7 +228,7 @@ export default function App() {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          height: 'calc(100vh - 40vh)', // Leaves space for the fixed keyboard and OutputPanel
+          height: 'calc(100vh - 45vh)', // Adjusted for header + OutputPanel
           overflow: 'auto',
         }}
         aria-label="Main communication area"
@@ -197,10 +239,19 @@ export default function App() {
               key={btn.emoji}
               className="phrase-btn"
               aria-label={btn.text}
-              onClick={() => setCurrentTextWithHistory(t => (t.trim() ? t + ' ' : '') + btn.text)}
+              onClick={(e) => {
+                setCurrentTextWithHistory(t => (t.trim() ? t + ' ' : '') + btn.text);
+                // Remove focus from the button to prevent space bar from triggering it again
+                // Use setTimeout to ensure blur happens after the click event is fully processed
+                setTimeout(() => {
+                  if (document.activeElement instanceof HTMLButtonElement) {
+                    document.activeElement.blur();
+                  }
+                }, 0);
+              }}
             >
-              <span style={{fontSize: '2.2rem', marginRight: '0.5rem'}}>{btn.emoji}</span>
-              {btn.text.length > 18 ? btn.text.slice(0, 18) + '…' : btn.text}
+              <span className="phrase-emoji">{btn.emoji}</span>
+              <span className="phrase-text">{btn.text.length > 18 ? btn.text.slice(0, 18) + '…' : btn.text}</span>
             </button>
           ))}
         </div>

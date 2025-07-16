@@ -17,8 +17,8 @@ export default function FloatingButton({ onClick, disabled = false, text = '🔊
       // Ignore parsing errors
     }
     
-    // Default position (bottom right, but not covering keyboard)
-    return { x: window.innerWidth - 150, y: window.innerHeight - 400 };
+    // Default position (bottom right corner above keyboard)
+    return { x: window.innerWidth - 180, y: window.innerHeight - 280 };
   });
   
   const [isDragging, setIsDragging] = useState(false);

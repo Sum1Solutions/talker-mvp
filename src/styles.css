@@ -57,44 +57,83 @@ body, html, #root {
   margin: 0;
 }
 
-/* Accessibility: High contrast and focus */
-:focus {
-  outline: 3px solid #1976d2 !important;
-  outline-offset: 2px;
-}
-
-@media (max-width: 600px) {
-  .container {
-    min-width: 320px;
-  }
-}
-
-
-.phrase-bar {
+/* App header styles */
+.app-header {
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  gap: 0.3rem;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  overflow-x: auto;
-  margin: 0 0 0.4rem 0;
-  width: 100vw;
-  padding: 0.2rem 0.2rem 0.2rem 0.4rem;
-  background: #f9fafb;
-  min-height: 5vh;
-  scrollbar-width: thin;
+  padding: 0.3rem 1rem;
+  background: #1976d2;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  width: 100%;
+  box-sizing: border-box;
+  height: 2.5rem;
 }
 
-
-.phrase-bar::-webkit-scrollbar {
-  height: 10px;
+.app-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
-.phrase-bar::-webkit-scrollbar-thumb {
-  background: #e0e0e0;
-  border-radius: 5px;
+.dropdown {
+  position: relative;
+  display: inline-block;
 }
+
+.settings-button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.settings-button:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #ffffff;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1000;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-item {
+  color: #333;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: system-ui, sans-serif;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+
 
 
 .phrase-btn {
@@ -114,11 +153,74 @@ body, html, #root {
   margin: 0.5rem;
 }
 
-
 .phrase-btn:hover, .phrase-btn:active {
   background: #ffe082;
   border-color: #ffd54f;
 }
+
+.phrase-emoji {
+  font-size: 2.2rem;
+  margin-right: 0.6rem;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.phrase-text {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.9rem;
+}
+
+/* Accessibility: High contrast and focus */
+:focus {
+  outline: 3px solid #1976d2 !important;
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .container {
+    min-width: 320px;
+  }
+}
+
+
+.phrase-bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  justify-content: flex-start;
+  align-items: stretch;
+  margin: 0 0 0.8rem 0;
+  padding: 0.4rem;
+  background: #f9fafb;
+  min-height: 5vh;
+  max-height: 25vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  align-content: flex-start;
+  width: 100%;
+}
+
+
+.phrase-bar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.phrase-bar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.phrase-bar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+
+
 
 @media (max-width: 900px), (pointer: coarse) {
   .phrase-btn {
@@ -131,65 +233,103 @@ body, html, #root {
 }
 
 .output-panel {
-  flex: 0 0 auto;
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border-bottom: 2px solid #e0e0e0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  z-index: 2;
-  padding: 0.2rem 0.5rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  margin-bottom: 0.5rem;
+  max-height: 40vh;
 }
 
 .text-container {
-  padding: 0.5rem 0.2rem;
-  width: 100%;
+  flex: 1;
+  min-height: 100px;
 }
 
 .output-text {
   width: 100%;
-  height: 140px;
-  font-size: 2.5rem;
-  padding: 1.5rem;
-  background: #f0f8ff;
-  color: #f9c74f;
-  border: 1px solid #e0e0e0;
-  border-radius: 0.5rem;
-  resize: none;
-  text-align: center;
-  font-weight: bold;
+  height: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   box-sizing: border-box;
-  outline: none;
-  margin: 0.5rem 0;
+  resize: none;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
+.output-text::-webkit-scrollbar {
+  width: 8px;
+}
+
+.output-text::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
 
 .output-actions {
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  padding: 0.5rem 0;
+  margin-top: 0.5rem;
 }
 
-.left-actions, .right-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.left-actions button {
-  background: #fff;
-  color: #000;
+.output-actions button {
+  padding: 0.7rem 1.5rem;
+  background: #f0f0f0;
   border: 1px solid #ccc;
-  border-radius: 1rem;
-  padding: 1.5rem 2.5rem;
-  font-size: 1.8rem;
+  border-radius: 6px;
+  margin: 0 0.3rem;
   cursor: pointer;
-  margin: 0.5rem;
+  font-size: 1.2rem;
+  min-width: 120px;
 }
 
-.stop-btn {
-  background: #c62828 !important;
-  color: #fff !important;
+.output-actions button:hover {
+  background: #e0e0e0;
+}
+
+.output-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.output-actions .speak-btn {
+  background: #1976d2;
+  color: white;
+  border-color: #1565c0;
+  font-weight: bold;
+}
+
+.output-actions .speak-btn:hover:not(:disabled) {
+  background: #1565c0;
+}
+
+.output-actions .stop-btn {
+  background: #F44336;
+  color: white;
+  border-color: #D32F2F;
+  font-weight: bold;
+}
+
+.output-actions .stop-btn:hover:not(:disabled) {
+  background: #D32F2F;
+}
+
+.output-actions .back-btn {
+  background: #ffc107;
+  color: #212121;
+  border-color: #ffa000;
+  font-weight: bold;
+}
+
+.output-actions .back-btn:hover:not(:disabled) {
+  background: #ffb300;
 }
 
 @media (max-width: 900px), (pointer: coarse) {
@@ -222,8 +362,8 @@ body, html, #root {
 }
 
 .floating-button {
-  font-size: 3rem;
-  padding: 2rem 4rem;
+  font-size: 2.8rem;
+  padding: 1.8rem 2.5rem;
   border-radius: 2.5rem;
   border: none;
   background-color: #1976d2;
@@ -237,8 +377,8 @@ body, html, #root {
   touch-action: none; /* Prevents scrolling while dragging on touch devices */
   width: auto;
   height: auto;
-  min-width: 11rem;
-  min-height: 6rem;
+  min-width: 8rem;
+  min-height: 5.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
