@@ -1,6 +1,10 @@
 
 # Talker MVP
 
+**[🔗 Try the live demo here](https://talker-mvp.pages.dev)**
+
+![Talker MVP Screenshot](https://raw.githubusercontent.com/Sum1Solutions/talker-mvp/main/public/screenshot.png)
+
 An open‑source **augmentative and alternative communication (AAC)** Progressive Web App that lets a user with motor impairment type sentences via large touch‑friendly keys and have them spoken aloud.
 
 > **Project goal:** deliver a base that works on any tablet with no install friction and can later grow to eye‑tracking and adaptive prediction.
