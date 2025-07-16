@@ -207,7 +207,7 @@ export default function App() {
               Reset to default
             </button>
             <a 
-              href="https://github.com/sum1solutions/ocutalk" 
+              href="https://github.com/Sum1Solutions/talker-mvp/blob/main/README.md" 
               target="_blank" 
               rel="noopener noreferrer"
               className="dropdown-item"
