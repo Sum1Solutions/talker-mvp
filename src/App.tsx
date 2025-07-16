@@ -20,11 +20,12 @@ async function fetchPredictions(text: string): Promise<string[]> {
 
 const PHRASE_BUTTONS = [
   { emoji: '🙄', text: "I don't mean to be a pain in the ass, but " },
-  { emoji: '👍', text: "I'm good." },
   { emoji: '😕', text: "I've got some discomfort." },
   { emoji: '🍽️', text: "I could eat." },
   { emoji: '🚻', text: "I could use help getting to the bathroom." },
-  { emoji: '💩', text: "I got a #2 coming." }
+  { emoji: '🚽', text: "I need to void please." },
+  { emoji: '💩', text: "I got a #2 coming." },
+  { emoji: '👍', text: "I'm good." }
 ];
 
 export default function App() {
