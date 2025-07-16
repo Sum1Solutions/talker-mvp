@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import Keyboard from './Keyboard';
-import PredictionBar from './PredictionBar';
 import OutputPanel from './OutputPanel';
+import PredictionBar from './PredictionBar';
+import FloatingButton from './FloatingButton';
 
 async function fetchPredictions(text: string): Promise<string[]> {
   try {
@@ -45,23 +45,57 @@ export default function App() {
   };
 
 
-  // Find a more human-like voice (Google, Apple, or best en-US)
-  function getBestVoice() {
+  // Find a male voice (preferring Google, Apple, or best en-US)
+  function getBestMaleVoice() {
     const voices = window.speechSynthesis.getVoices();
     return (
+      // Try to find a male voice by name
+      voices.find(v => 
+        (v.name.toLowerCase().includes('male') || 
+        v.name.includes('David') ||
+        v.name.includes('Daniel') ||
+        v.name.includes('Thomas') ||
+        v.name.includes('Alex') ||
+        v.name.includes('Google UK English Male')) &&
+        v.lang.startsWith('en')
+      ) ||
+      // Fall back to any Google/Apple voice that might be male
       voices.find(v => v.name.includes('Google') && v.lang.startsWith('en')) ||
       voices.find(v => v.name.includes('Apple') && v.lang.startsWith('en')) ||
+      // Last resort - any English voice
       voices.find(v => v.lang === 'en-US') ||
       voices[0]
     );
   }
+  
+  // Initialize voices when available
+  const [maleVoice, setMaleVoice] = useState<SpeechSynthesisVoice | null>(null);
+  
+  // Load voices as soon as they're available
+  useEffect(() => {
+    const loadVoices = () => {
+      const voice = getBestMaleVoice();
+      setMaleVoice(voice);
+    };
+    
+    // Voices might be available immediately
+    loadVoices();
+    
+    // Or they might load asynchronously
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
 
   // Only allow one utterance at a time
   const speak = () => {
     if (speaking) return;
     if (!currentText.trim()) return;
     const utter = new window.SpeechSynthesisUtterance(currentText);
-    utter.voice = getBestVoice();
+    // Use the stored male voice for consistent voice across calls
+    utter.voice = maleVoice;
     utter.onend = () => {
       setSpeaking(false);
       // Only clear if not in instant speak mode
@@ -105,8 +139,20 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [currentText]);
 
+  // Add global keyboard event listener for Enter key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        speak();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [speak]); // Include speak in dependency array to avoid stale closures
+
   const handleKey = (key: string) => {
-    if (key === ' ') {
+    if (key === ' ' || key === 'SPACE') {
       setCurrentTextWithHistory(t => t + ' ');
       if (deferSpeak && !speaking && currentText.trim()) {
         setTimeout(() => speak(), 0);
@@ -160,6 +206,7 @@ export default function App() {
         <PredictionBar predictions={predictions} onPick={handlePrediction}/>
       </div>
       <Keyboard onKeyPress={handleKey}/>
+      <FloatingButton onClick={speak} disabled={speaking} />
     </div>
   );
 }

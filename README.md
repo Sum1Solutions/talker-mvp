@@ -93,11 +93,45 @@ git commit -m "Initial working Talker MVP"
 
 ---
 
-## Next milestones
+## UI/UX Roadmap
 
-1. **Prediction engine** – compile [Presage](https://github.com/bitbrain/presage) to WebAssembly and call it from the Worker.  
-2. **Data logging** – add `/log` endpoint and nightly KV aggregation.  
-3. **Eye tracking** – hook into upcoming iPadOS Eye Tracking events or WebGazer fallback.
+The Talker MVP provides a solid foundation for AAC communication. Here's a strategic UI/UX roadmap to enhance user experience for individuals with motor impairments:
+
+### 1. Accessibility Enhancements
+
+- **Improved Visual Contrast**: Implement high-contrast themes and customizable color schemes to accommodate various visual needs
+- **Touch Optimization**: Fine-tune touch target sizes and spacing based on user testing with target population
+- **Haptic Feedback**: Add subtle vibration confirmation for key presses where device-supported
+- **Focus States**: Enhance keyboard navigation with more visible focus indicators
+
+### 2. Personalization Features
+
+- **User Profiles**: Allow saving preferences, custom phrases, and personal dictionaries
+- **Layout Customization**: Enable repositioning of UI elements based on individual motor abilities
+- **Voice Selection**: Add interface for choosing preferred voice, speech rate, and pitch
+- **Theme Options**: Provide night mode and other visual themes for different environments
+
+### 3. Interaction Improvements
+
+- **Gesture Support**: Implement simple swipe gestures for common actions (backspace, space, clear)
+- **Context Menus**: Add long-press options for additional functionality
+- **Undo/Redo**: Expand the current history feature with multiple levels of undo
+- **Custom Phrases**: Allow users to create, edit and categorize their own phrase buttons
+
+### 4. Prediction System Evolution
+
+- **Context-Aware Suggestions**: Improve predictions by considering sentence context
+- **Visual Prominence**: Make prediction UI more noticeable with better visual hierarchy
+- **Adaptive Learning**: Accelerate the personalized prediction system to learn from user patterns
+- **Category-Based Predictions**: Offer contextual predictions based on conversation topics
+
+---
+
+## Next Technical Milestones
+
+1. **Prediction engine** – compile [Presage](https://github.com/bitbrain/presage) to WebAssembly and call it from the Worker.  
+2. **Data logging** – add `/log` endpoint and nightly KV aggregation.  
+3. **Eye tracking** – hook into upcoming iPadOS Eye Tracking events or WebGazer fallback.
 
 ---
 

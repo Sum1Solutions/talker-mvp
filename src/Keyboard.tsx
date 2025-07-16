@@ -15,9 +15,11 @@ export default function Keyboard({ onKeyPress }: Props) {
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const [caps, setCaps] = useState<boolean>(true);
 
+
   useEffect(() => {
     const handleDown = (e: KeyboardEvent) => {
       let key = e.key;
+      
       if (key === ' ') key = 'SPACE';
       if (key === 'Backspace' || key === 'BACKSPACE') key = 'BACKSPACE';
       if (key === 'Shift' || key === 'CapsLock') {
@@ -41,6 +43,8 @@ export default function Keyboard({ onKeyPress }: Props) {
       window.removeEventListener('keyup', handleUp);
     };
   }, [onKeyPress, caps]);
+
+
 
   return (
     <div className="keyboard">
