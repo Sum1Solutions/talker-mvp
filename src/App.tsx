@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react';
 import Keyboard from './Keyboard';
 import OutputPanel from './OutputPanel';
 import PredictionBar from './PredictionBar';
@@ -28,12 +28,21 @@ const PHRASE_BUTTONS = [
   { emoji: '👍', text: "I'm good." }
 ];
 
+// Default UI scale factor
+const DEFAULT_UI_SCALE = 1.0;
+
 export default function App() {
   const [currentText, setCurrentText] = useState<string>('');
   const [predictions, setPredictions] = useState<string[]>([]);
   const [speaking, setSpeaking] = useState(false);
   const [deferSpeak, setDeferSpeak] = useState(false);
   const [lastText, setLastText] = useState<string>('');
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const [uiScale, setUiScale] = useState<number>(() => {
+    // Load saved scale from localStorage or use default
+    const savedScale = localStorage.getItem('uiScale');
+    return savedScale ? parseFloat(savedScale) : DEFAULT_UI_SCALE;
+  });
   const utterRef = React.useRef<SpeechSynthesisUtterance|null>(null);
 
   // Always track previous text before any change
@@ -44,6 +53,31 @@ export default function App() {
       return updated;
     });
   };
+  
+  // Handle orientation changes and viewport size changes
+  useLayoutEffect(() => {
+    // Add viewport meta tag for proper scaling
+    const meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+    document.head.appendChild(meta);
+    
+    const handleResize = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    
+    // Initial check
+    handleResize();
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      document.head.removeChild(meta);
+    };
+  }, []);
 
 
   // Find a male voice (preferring Google, Apple, or best en-US)
@@ -183,9 +217,36 @@ export default function App() {
   };
 
 
+  // Update UI scale and save to localStorage
+  const updateUiScale = useCallback((newScale: number) => {
+    // Limit scale between 0.7 and 1.5 for usability
+    const limitedScale = Math.max(0.7, Math.min(1.5, newScale));
+    setUiScale(limitedScale);
+    localStorage.setItem('uiScale', limitedScale.toString());
+    
+    // Apply scale to root element for global scaling
+    document.documentElement.style.setProperty('--ui-scale', limitedScale.toString());
+  }, []);
+  
+  // Increase UI scale by 0.1
+  const increaseScale = () => {
+    updateUiScale(uiScale + 0.1);
+  };
+  
+  // Decrease UI scale by 0.1
+  const decreaseScale = () => {
+    updateUiScale(uiScale - 0.1);
+  };
+  
+  // Apply scale when component mounts or scale changes
+  useEffect(() => {
+    document.documentElement.style.setProperty('--ui-scale', uiScale.toString());
+  }, [uiScale]);
+
   const resetToDefault = () => {
-    // Reset floating button position by clearing local storage
+    // Reset floating button position and UI scale by clearing local storage
     localStorage.removeItem('floatingButtonPosition');
+    localStorage.removeItem('uiScale');
     // Force refresh to apply defaults
     window.location.reload();
   };
@@ -194,6 +255,27 @@ export default function App() {
     <div className="container" style={{position: 'relative'}}>
       <div className="app-header">
         <h1 className="app-title">ocutalk.com</h1>
+        <div className="scale-controls">
+          <button 
+            className="scale-button" 
+            onClick={decreaseScale} 
+            title="Decrease UI size"
+            aria-label="Decrease UI size"
+          >
+            🔍-
+          </button>
+          <span className="scale-value" title="Current UI scale">
+            {Math.round(uiScale * 100)}%
+          </span>
+          <button 
+            className="scale-button" 
+            onClick={increaseScale} 
+            title="Increase UI size"
+            aria-label="Increase UI size"
+          >
+            🔍+
+          </button>
+        </div>
         <div className="dropdown">
           <button className="settings-button" title="Settings">
             ⚙️

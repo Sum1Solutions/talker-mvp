@@ -74,7 +74,6 @@ export default function Keyboard({ onKeyPress }: Props) {
       <div className="kb-row">
         <button
           className={`key wide${pressedKey === 'SPACE' ? ' key-active' : ''}`}
-          style={{marginRight: 'auto'}} // push backspace to right
           onClick={() => onKeyPress(' ')}
           aria-label="Space bar"
         >

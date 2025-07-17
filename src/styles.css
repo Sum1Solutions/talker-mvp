@@ -1,48 +1,103 @@
 
+:root {
+  --ui-scale: 1.0; /* Default scale factor */
+  /* Base font size that will be scaled */
+  font-size: calc(16px * var(--ui-scale));
+}
+
 body, html, #root {
   height: 100vh;
   width: 100vw;
   margin: 0;
   padding: 0;
-  font-family: system-ui, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background: #f9fafb;
   overflow: hidden;
   touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
+/* Base responsive layout for all tablets */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Landscape orientation - wider than tall */
 @media (orientation: landscape) {
   .container {
     flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-    min-width: 0;
-    min-height: 0;
   }
+  
+  .output-panel {
+    min-height: 15vh;
+    max-height: 25vh;
+  }
+  
   .main-content {
-    height: calc(100vh - 26vh);
+    height: calc(100vh - 40vh - 8rem); /* Account for output panel and keyboard */
     min-height: 0;
+    max-height: 30vh;
   }
+  
   .keyboard {
     min-height: 22vh;
     max-height: 28vh;
   }
+  
+  .key {
+    min-width: min(8vw, 90px);
+    min-height: min(8vh, 80px);
+    font-size: clamp(1.8rem, 3vw, 3.5rem);
+  }
 }
 
+/* Portrait orientation - taller than wide */
 @media (orientation: portrait) {
   .container {
     flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-    min-width: 0;
-    min-height: 0;
   }
+  
+  .output-panel {
+    min-height: 18vh;
+    max-height: 28vh;
+  }
+  
   .main-content {
-    height: calc(100vh - 36vh);
+    height: calc(100vh - 50vh - 8rem); /* Account for output panel and keyboard */
     min-height: 0;
+    max-height: 25vh;
   }
+  
   .keyboard {
     min-height: 30vh;
-    max-height: 38vh;
+    max-height: 40vh;
+  }
+  
+  .key {
+    min-width: min(10vw, 90px);
+    min-height: min(7vh, 80px);
+    font-size: clamp(1.8rem, 4vw, 3.5rem);
+  }
+}
+
+/* Large tablets (iPad Pro, etc.) */
+@media (min-width: 1024px) and (min-height: 1024px) {
+  .key {
+    min-width: min(7vw, 100px);
+    min-height: min(7vh, 90px);
+    font-size: clamp(2.2rem, 2.8vw, 4rem);
+  }
+  
+  .output-text {
+    font-size: clamp(2rem, 3vw, 3rem);
   }
 }
 
@@ -62,13 +117,52 @@ body, html, #root {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.3rem 1rem;
   background: #1976d2;
   color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   width: 100%;
   box-sizing: border-box;
   height: 2.5rem;
+}
+
+/* UI Scaling Controls */
+.scale-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  margin-right: 1rem;
+}
+
+.scale-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scale-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.scale-button:active {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.scale-value {
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  min-width: 3.5rem;
+  text-align: center;
 }
 
 .app-title {
@@ -338,11 +432,22 @@ body, html, #root {
     max-height: 13vh;
   }
   .output-text {
-    font-size: clamp(1rem, 3vw, 1.1rem);
-    padding: 0.2rem 0.4rem;
+    font-size: clamp(1.5rem, 3.5vw, 2.6rem);
+    padding: min(1.2rem, 2vh) min(1.4rem, 2vw);
+    border: min(3px, 0.3vh) solid #1976d2;
+    background: #fff;
+    resize: none;
+    width: 100%;
+    height: 100%;
+    min-height: min(6rem, 15vh);
+    color: #111;
+    border-radius: min(0.7rem, 1vh);
+    outline: none;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(25,118,210,0.07);
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
 }
-
 
 .speak-btn {
   background: #1976d2;
@@ -525,19 +630,21 @@ button {
   gap: 0.2rem;
   margin-bottom: 0.18rem;
   width: 100%;
+  padding: 0 0.3rem;
+  box-sizing: border-box;
 }
 
 
 
 .key {
-  font-size: clamp(2.6rem, 7vw, 4.2rem);
-  padding: 1.1rem 2.2rem;
-  min-width: 72px;
-  min-height: 72px;
-  max-width: 120px;
-  max-height: 120px;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  padding: min(1.1rem, 2vh) min(2rem, 3vw);
+  min-width: min(72px, 10vw);
+  min-height: min(72px, 8vh);
+  max-width: min(120px, 15vw);
+  max-height: min(120px, 12vh);
   border-radius: 1.1rem;
-  margin: 0.17rem;
+  margin: min(0.17rem, 0.5vh);
   box-shadow: 0 2px 6px rgba(0,0,0,0.13);
   touch-action: manipulation;
   transition: background 0.1s, border 0.1s;
@@ -546,6 +653,10 @@ button {
   border: 3px solid #1976d2;
   font-weight: 900;
   letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 
@@ -564,21 +675,42 @@ button {
 }
 
 .key.wide {
-  flex: 8 1 400px;
-  min-width: 210px;
-  max-width: 90vw;
-  font-size: clamp(2.6rem, 7vw, 4.2rem);
-  padding: 1.1rem 2.2rem;
+  flex: 0 0 auto;
+  width: 60%;
+  min-width: 180px;
+  max-width: 400px;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  padding: min(1.1rem, 2vh) min(2.2rem, 3vw);
   border-radius: 1.1rem;
+  margin: 0;
 }
 
 .key.backspace {
-  flex: 1 1 72px;
-  min-width: 72px;
-  max-width: 120px;
-  font-size: clamp(2.2rem, 6vw, 3.5rem);
-  padding: 1.1rem 1.2rem;
+  flex: 0 0 auto;
+  width: 15%;
+  min-width: 60px;
+  max-width: 100px;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  padding: min(1.1rem, 2vh) min(1.2rem, 2vw);
   border-radius: 1.1rem;
+  margin: 0;
+}
+
+.key.caps-toggle {
+  flex: 0 0 auto;
+  width: 10%;
+  min-width: 50px;
+  max-width: 80px;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  padding: min(1rem, 1.5vh) min(1rem, 1.5vw);
+  border-radius: 1.1rem;
+}
+
+/* Special styling for the bottom row */
+.kb-row:last-child {
+  justify-content: center;
+  padding: 0 0.5rem;
+  gap: 0.5rem;
 }
 
 
