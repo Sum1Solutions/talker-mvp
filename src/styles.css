@@ -1,8 +1,12 @@
 
 :root {
   --ui-scale: 1.0; /* Default scale factor */
+  --ui-scale-font: 1.0; /* Font scaling */
+  --ui-scale-size: 1.0; /* Button/element size scaling */
+  --ui-scale-space: 1.0; /* Spacing scaling */
+  
   /* Base font size that will be scaled */
-  font-size: calc(16px * var(--ui-scale));
+  font-size: calc(16px * var(--ui-scale-font));
 }
 
 body, html, #root {
@@ -88,16 +92,40 @@ body, html, #root {
   }
 }
 
-/* Large tablets (iPad Pro, etc.) */
-@media (min-width: 1024px) and (min-height: 1024px) {
+/* iPad 11-inch specific optimizations (2388×1668 or 1668×2388) */
+@media (min-device-width: 1668px) and (max-device-width: 2388px) {
+  :root {
+    /* Better base sizing for iPad 11-inch */
+    font-size: calc(18px * var(--ui-scale-font));
+  }
+  
   .key {
-    min-width: min(7vw, 100px);
-    min-height: min(7vh, 90px);
-    font-size: clamp(2.2rem, 2.8vw, 4rem);
+    min-width: calc(70px * var(--ui-scale-size));
+    min-height: calc(60px * var(--ui-scale-size));
+    font-size: calc(1.8rem * var(--ui-scale-font));
+    margin: calc(2px * var(--ui-scale-space));
+  }
+  
+  .keyboard {
+    gap: calc(4px * var(--ui-scale-space));
+    padding: calc(8px * var(--ui-scale-space));
   }
   
   .output-text {
-    font-size: clamp(2rem, 3vw, 3rem);
+    font-size: calc(1.8rem * var(--ui-scale-font));
+  }
+}
+
+/* Large tablets (iPad Pro, etc.) */
+@media (min-width: 1024px) and (min-height: 1024px) {
+  .key {
+    min-width: calc(min(7vw, 100px) * var(--ui-scale-size));
+    min-height: calc(min(7vh, 90px) * var(--ui-scale-size));
+    font-size: calc(clamp(2.2rem, 2.8vw, 4rem) * var(--ui-scale-font));
+  }
+  
+  .output-text {
+    font-size: calc(clamp(2rem, 3vw, 3rem) * var(--ui-scale-font));
   }
 }
 
@@ -119,34 +147,36 @@ body, html, #root {
   align-items: center;
   background: #1976d2;
   color: white;
-  padding: 0.5rem 1rem;
+  padding: calc(0.5rem * var(--ui-scale-space)) calc(1rem * var(--ui-scale-space));
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   width: 100%;
   box-sizing: border-box;
-  height: 2.5rem;
+  height: calc(2.5rem * var(--ui-scale-size));
 }
 
 /* UI Scaling Controls */
 .scale-controls {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: calc(0.5rem * var(--ui-scale-space));
   margin-left: auto;
-  margin-right: 1rem;
+  margin-right: calc(1rem * var(--ui-scale-space));
 }
 
 .scale-button {
   background: rgba(255, 255, 255, 0.2);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 0.4rem 0.6rem;
-  font-size: 1.2rem;
+  border-radius: calc(4px * var(--ui-scale-space));
+  padding: calc(0.4rem * var(--ui-scale-space)) calc(0.6rem * var(--ui-scale-space));
+  font-size: calc(1.2rem * var(--ui-scale-font));
   cursor: pointer;
   transition: background 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: calc(2rem * var(--ui-scale-size));
+  min-height: calc(2rem * var(--ui-scale-size));
 }
 
 .scale-button:hover {
@@ -180,14 +210,16 @@ body, html, #root {
   background: transparent;
   border: none;
   color: white;
-  font-size: 1.8rem;
+  font-size: calc(1.8rem * var(--ui-scale-font));
   cursor: pointer;
-  padding: 0.5rem;
+  padding: calc(0.5rem * var(--ui-scale-space));
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   transition: background-color 0.2s;
+  min-width: calc(2.5rem * var(--ui-scale-size));
+  min-height: calc(2.5rem * var(--ui-scale-size));
 }
 
 .settings-button:hover {
@@ -199,10 +231,10 @@ body, html, #root {
   position: absolute;
   right: 0;
   background-color: #ffffff;
-  min-width: 160px;
+  min-width: calc(160px * var(--ui-scale-size));
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1000;
-  border-radius: 6px;
+  border-radius: calc(6px * var(--ui-scale-space));
   overflow: hidden;
 }
 
@@ -212,14 +244,14 @@ body, html, #root {
 
 .dropdown-item {
   color: #333;
-  padding: 12px 16px;
+  padding: calc(12px * var(--ui-scale-space)) calc(16px * var(--ui-scale-space));
   text-decoration: none;
   display: block;
   width: 100%;
   text-align: left;
   border: none;
   background: transparent;
-  font-size: 1rem;
+  font-size: calc(1rem * var(--ui-scale-font));
   cursor: pointer;
   font-family: system-ui, sans-serif;
 }
@@ -233,18 +265,18 @@ body, html, #root {
 .phrase-btn {
   display: flex;
   align-items: center;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  padding: 1rem 1.5rem;
-  min-width: 5rem;
-  min-height: 4rem;
-  border-radius: 1rem;
+  font-size: calc(clamp(1.5rem, 3vw, 2rem) * var(--ui-scale-font));
+  padding: calc(1rem * var(--ui-scale-space)) calc(1.5rem * var(--ui-scale-space));
+  min-width: calc(5rem * var(--ui-scale-size));
+  min-height: calc(4rem * var(--ui-scale-size));
+  border-radius: calc(1rem * var(--ui-scale-space));
   background: #fffbe7;
-  border: 1px solid #ffe082;
+  border: calc(1px * var(--ui-scale-space)) solid #ffe082;
   color: #444;
   box-shadow: 0 1px 3px rgba(0,0,0,0.07);
   cursor: pointer;
   transition: background 0.15s, border 0.15s;
-  margin: 0.5rem;
+  margin: calc(0.5rem * var(--ui-scale-space));
 }
 
 .phrase-btn:hover, .phrase-btn:active {
@@ -253,8 +285,8 @@ body, html, #root {
 }
 
 .phrase-emoji {
-  font-size: 2.2rem;
-  margin-right: 0.6rem;
+  font-size: calc(2.2rem * var(--ui-scale-font));
+  margin-right: calc(0.6rem * var(--ui-scale-space));
   display: inline-block;
   flex-shrink: 0;
 }
@@ -263,7 +295,7 @@ body, html, #root {
   flex-grow: 1;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.9rem;
+  font-size: calc(0.9rem * var(--ui-scale-font));
 }
 
 /* Accessibility: High contrast and focus */
@@ -619,6 +651,8 @@ button {
   left: 0;
   z-index: 10;
   box-shadow: 0 -2px 12px rgba(25, 118, 210, 0.06);
+  gap: calc(4px * var(--ui-scale-space));
+  padding: calc(8px * var(--ui-scale-space));
 }
 
 
@@ -627,30 +661,30 @@ button {
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  gap: 0.2rem;
-  margin-bottom: 0.18rem;
+  gap: calc(0.2rem * var(--ui-scale-space));
+  margin-bottom: calc(0.18rem * var(--ui-scale-space));
   width: 100%;
-  padding: 0 0.3rem;
+  padding: 0 calc(0.3rem * var(--ui-scale-space));
   box-sizing: border-box;
 }
 
 
 
 .key {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  padding: min(1.1rem, 2vh) min(2rem, 3vw);
-  min-width: min(72px, 10vw);
-  min-height: min(72px, 8vh);
-  max-width: min(120px, 15vw);
-  max-height: min(120px, 12vh);
-  border-radius: 1.1rem;
-  margin: min(0.17rem, 0.5vh);
+  font-size: calc(clamp(2rem, 5vw, 3.5rem) * var(--ui-scale-font));
+  padding: calc(min(1.1rem, 2vh) * var(--ui-scale-space)) calc(min(2rem, 3vw) * var(--ui-scale-space));
+  min-width: calc(min(72px, 10vw) * var(--ui-scale-size));
+  min-height: calc(min(72px, 8vh) * var(--ui-scale-size));
+  max-width: calc(min(120px, 15vw) * var(--ui-scale-size));
+  max-height: calc(min(120px, 12vh) * var(--ui-scale-size));
+  border-radius: calc(1.1rem * var(--ui-scale-space));
+  margin: calc(min(0.17rem, 0.5vh) * var(--ui-scale-space));
   box-shadow: 0 2px 6px rgba(0,0,0,0.13);
   touch-action: manipulation;
   transition: background 0.1s, border 0.1s;
   background: #f4f8ff;
   color: #19344d;
-  border: 3px solid #1976d2;
+  border: calc(3px * var(--ui-scale-space)) solid #1976d2;
   font-weight: 900;
   letter-spacing: 0.06em;
   display: flex;
@@ -677,40 +711,40 @@ button {
 .key.wide {
   flex: 0 0 auto;
   width: 60%;
-  min-width: 180px;
-  max-width: 400px;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  padding: min(1.1rem, 2vh) min(2.2rem, 3vw);
-  border-radius: 1.1rem;
+  min-width: calc(180px * var(--ui-scale-size));
+  max-width: calc(400px * var(--ui-scale-size));
+  font-size: calc(clamp(2rem, 5vw, 3.5rem) * var(--ui-scale-font));
+  padding: calc(min(1.1rem, 2vh) * var(--ui-scale-space)) calc(min(2.2rem, 3vw) * var(--ui-scale-space));
+  border-radius: calc(1.1rem * var(--ui-scale-space));
   margin: 0;
 }
 
 .key.backspace {
   flex: 0 0 auto;
   width: 15%;
-  min-width: 60px;
-  max-width: 100px;
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  padding: min(1.1rem, 2vh) min(1.2rem, 2vw);
-  border-radius: 1.1rem;
+  min-width: calc(60px * var(--ui-scale-size));
+  max-width: calc(100px * var(--ui-scale-size));
+  font-size: calc(clamp(1.8rem, 4vw, 3rem) * var(--ui-scale-font));
+  padding: calc(min(1.1rem, 2vh) * var(--ui-scale-space)) calc(min(1.2rem, 2vw) * var(--ui-scale-space));
+  border-radius: calc(1.1rem * var(--ui-scale-space));
   margin: 0;
 }
 
 .key.caps-toggle {
   flex: 0 0 auto;
   width: 10%;
-  min-width: 50px;
-  max-width: 80px;
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  padding: min(1rem, 1.5vh) min(1rem, 1.5vw);
-  border-radius: 1.1rem;
+  min-width: calc(50px * var(--ui-scale-size));
+  max-width: calc(80px * var(--ui-scale-size));
+  font-size: calc(clamp(1.8rem, 4vw, 3rem) * var(--ui-scale-font));
+  padding: calc(min(1rem, 1.5vh) * var(--ui-scale-space)) calc(min(1rem, 1.5vw) * var(--ui-scale-space));
+  border-radius: calc(1.1rem * var(--ui-scale-space));
 }
 
 /* Special styling for the bottom row */
 .kb-row:last-child {
   justify-content: center;
-  padding: 0 0.5rem;
-  gap: 0.5rem;
+  padding: 0 calc(0.5rem * var(--ui-scale-space));
+  gap: calc(0.5rem * var(--ui-scale-space));
 }
 
 

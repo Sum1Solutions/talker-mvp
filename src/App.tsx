@@ -219,13 +219,16 @@ export default function App() {
 
   // Update UI scale and save to localStorage
   const updateUiScale = useCallback((newScale: number) => {
-    // Limit scale between 0.7 and 1.5 for usability
-    const limitedScale = Math.max(0.7, Math.min(1.5, newScale));
+    // Expanded scale range for better accessibility on tablets
+    const limitedScale = Math.max(0.5, Math.min(2.0, newScale));
     setUiScale(limitedScale);
     localStorage.setItem('uiScale', limitedScale.toString());
     
-    // Apply scale to root element for global scaling
+    // Apply comprehensive scaling to root element
     document.documentElement.style.setProperty('--ui-scale', limitedScale.toString());
+    document.documentElement.style.setProperty('--ui-scale-font', limitedScale.toString());
+    document.documentElement.style.setProperty('--ui-scale-size', limitedScale.toString());
+    document.documentElement.style.setProperty('--ui-scale-space', limitedScale.toString());
   }, []);
   
   // Increase UI scale by 0.1
@@ -238,9 +241,12 @@ export default function App() {
     updateUiScale(uiScale - 0.1);
   };
   
-  // Apply scale when component mounts or scale changes
+  // Apply comprehensive scale when component mounts or scale changes
   useEffect(() => {
     document.documentElement.style.setProperty('--ui-scale', uiScale.toString());
+    document.documentElement.style.setProperty('--ui-scale-font', uiScale.toString());
+    document.documentElement.style.setProperty('--ui-scale-size', uiScale.toString());
+    document.documentElement.style.setProperty('--ui-scale-space', uiScale.toString());
   }, [uiScale]);
 
   const resetToDefault = () => {
