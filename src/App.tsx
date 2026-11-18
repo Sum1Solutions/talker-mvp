@@ -4,7 +4,14 @@ import OutputPanel from './OutputPanel';
 import PredictionBar from './PredictionBar';
 import FloatingButton from './FloatingButton';
 
+// Word prediction is disabled until there is a real prediction source.
+// The only backend route (worker/index.ts) is a six-word stub and is not
+// deployed by Cloudflare Pages anyway, so /api/predict returned 405 and the
+// bar never appeared. Flip this on once a source exists (2026-11-18).
+const PREDICTION_ENABLED = false;
+
 async function fetchPredictions(text: string): Promise<string[]> {
+  if (!PREDICTION_ENABLED) return [];
   try {
     const res = await fetch('/api/predict', {
       method: 'POST',
